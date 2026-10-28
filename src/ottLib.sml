@@ -48,10 +48,10 @@ fun inst_filter_size tm =
         []
   | SOME thm => [thm];
 
-fun APPLY_FILTER_SIZE (assums, g) =
+fun APPLY_FILTER_SIZE (assums, g) ctxt =
   case inst_filter_size g of
-    [] => ALL_TAC (assums, g)
-  | l => (MAP_EVERY STRIP_ASSUME_TAC l) (assums, g);
+    [] => ALL_TAC (assums, g) ctxt
+  | l => (MAP_EVERY STRIP_ASSUME_TAC l) (assums, g) ctxt;
 
 fun find_list t =
   if is_var t then
@@ -61,10 +61,10 @@ fun find_list t =
   else
     t;
 
-fun PAIR_CASES_TAC (a, g) = 
+fun PAIR_CASES_TAC (a, g) ctxt =
   case total dest_prod (type_of (fst (dest_forall g))) of
-    NONE => ALL_TAC (a, g)
-  | SOME _ => Cases (a, g);
+    NONE => ALL_TAC (a, g) ctxt
+  | SOME _ => Cases (a, g) ctxt;
 
 
 fun MEM_IND_TAC mem =
@@ -122,16 +122,16 @@ fun mk_branch (consts, TAC) =
  TAC);
 
 fun THENcases (rws:thm list) (tac1:tactic) (branches:((term list * term -> bool) * tactic) list) : tactic =
-fn g =>
+fn g => fn ctxt =>
 let val tac2 = SIMP_TAC (srw_ss()) rws;
     fun apply_branch subgoal =
       case List.find (fn (pred, T) => pred subgoal) branches of
-        NONE => tac2 subgoal
+        NONE => tac2 subgoal ctxt
       | SOME (pred, T) =>
-          (case (tac2 THEN T) subgoal of
+          (case (tac2 THEN T) subgoal ctxt of
              ([], vf) => let val th = vf [] in ([], fn [] => th) end
            | x => x);
-    val (gl, vf) = tac1 g;
+    val (gl, vf) = tac1 g ctxt;
     val (G,V,lengths) =
       itlist (fn goal => fn (G,V,lengths) =>
                 let val (goals, vfun) = apply_branch goal in
