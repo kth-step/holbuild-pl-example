@@ -12,7 +12,7 @@ rev = "652d1f0aad5cd537ed1e5d470ba3444e70ba470e"
 [build]
 members = ["src"]
 roots = [
-  "src/compScript.sml",
+  "src/compMetaScript.sml",
 ]
 tactic_timeout = 10.0
 
