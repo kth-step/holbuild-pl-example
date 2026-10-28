@@ -3,7 +3,7 @@ schema = 2
 minimum_version = "0.11.0"
 
 [project]
-name = "holbuild-example"
+name = "holbuild-pl-example"
 
 [dependencies.hol]
 git = "https://github.com/HOL-Theorem-Prover/HOL.git"
@@ -15,4 +15,3 @@ roots = [
   "src/compMetaScript.sml",
 ]
 tactic_timeout = 10.0
-
